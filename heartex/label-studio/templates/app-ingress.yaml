@@ -3,9 +3,10 @@
 {{- $svcPort := .Values.app.service.port -}}
 {{- if and .Values.app.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.app.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.app.ingress.annotations "kubernetes.io/ingress.class" .Values.app.ingress.className}}
+  {{- $_ := set .Values.app.ingress.annotations "kubernetes.io/ingress.class" .Values.app.ingress.className }}
   {{- end }}
 {{- end }}
+
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
 {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -44,22 +45,17 @@ spec:
           {{- toYaml .Values.app.ingress.extraPaths | nindent 10 }}
           {{- end }}
           - path: {{ default "/" .Values.app.ingress.path }}
+            {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: {{ .Values.app.ingress.pathType }}
+            {{- end }}
             backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullName }}
                 port:
                   number: {{ $svcPort }}
-    {{- range .Values.app.ingress.extraHosts }}
-    - host: {{ .name }}
-      http:
-        paths:
-          - path: {{ default "/" .path }}
-            pathType: {{ default "ImplementationSpecific" .pathType }}
-            backend:
-              service:
-                name: {{ $fullName }}
-                port:
-                  number: {{ $svcPort }}
-    {{- end }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
 {{- end }}
