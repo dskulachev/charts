@@ -1,3 +1,26 @@
 apiVersion: v1
-entries: {}
-generated: "2025-02-12T15:24:15.242671597+03:00"
+entries:
+  label-studio:
+  - apiVersion: v2
+    appVersion: 1.15.0
+    created: "2025-02-12T16:02:36.298867212+03:00"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.6.3
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 15.5.15
+    description: Label Studio is a data labeling tool
+    digest: 13f82df0e51ca6551827a4dea630b07bb856c8159f68819c8469a2a9402210d6
+    home: https://labelstud.io/
+    icon: https://raw.githubusercontent.com/heartexlabs/label-studio/master/images/logo.png
+    kubeVersion: '>= 1.14.0-0'
+    name: label-studio
+    type: application
+    urls:
+    - https://dskulachev.github.io/charts/label-studio-1.9.2.tgz
+    version: 1.9.2
+generated: "2025-02-12T16:02:36.265424592+03:00"
